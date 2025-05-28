@@ -302,45 +302,6 @@ static struct platform_device ardbeg_ar0261_soc_camera_device = {
 };
 #endif
 
-#if IS_ENABLED(CONFIG_SOC_CAMERA_AR0330)
-static int ardbeg_ar0330_power(struct device *dev, int enable)
-{
-	return 0;
-}
-
-struct ar0330_platform_data ardbeg_ar0330_data;
-
-static struct i2c_board_info ardbeg_ar0330_camera_i2c_device = {
-	I2C_BOARD_INFO("ar0330_v4l2", 0x18),
-	.platform_data = &ardbeg_ar0330_data,
-};
-
-static struct tegra_camera_platform_data ardbeg_ar0330_camera_platform_data = {
-	.flip_v			= 0,
-	.flip_h			= 0,
-	.port			= TEGRA_CAMERA_PORT_CSI_A,
-	.lanes			= 1,
-	.continuous_clk		= 0,
-};
-
-static struct soc_camera_link ar0330_iclink = {
-	.bus_id		= 0, /* This must match the .id of tegra_vi01_device */
-	.board_info	= &ardbeg_ar0330_camera_i2c_device,
-	.module_name	= "ar0330_v4l2",
-	.i2c_adapter_id	= 2,
-	.power		= ardbeg_ar0330_power,
-	.priv		= &ardbeg_ar0330_camera_platform_data,
-};
-
-static struct platform_device ardbeg_ar0330_soc_camera_device = {
-	.name	= "soc-camera-pdrv",
-	.id	= 0,
-	.dev	= {
-		.platform_data = &ar0330_iclink,
-	},
-};
-#endif
-
 static struct regulator *ardbeg_vcmvdd;
 
 static int ardbeg_get_extra_regulators(void)
@@ -1556,9 +1517,6 @@ static int ardbeg_camera_init(void)
 #if IS_ENABLED(CONFIG_SOC_CAMERA_AR0261)
 	platform_device_register(&ardbeg_ar0261_soc_camera_device);
 #endif
-#if IS_ENABLED(CONFIG_SOC_CAMERA_AR0330)
-	platform_device_register(&ardbeg_ar0330_soc_camera_device);
-#endif
 	return 0;
 }
 
@@ -1585,6 +1543,8 @@ static struct thermal_zone_params board_tzp = {
 static struct throttle_table cpu_throttle_table[] = {
 	/* CPU_THROT_LOW cannot be used by other than CPU */
 	/*      CPU,    GPU,  C2BUS,  C3BUS,   SCLK,    EMC   */
+	{ { 2499000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
+	{ { 2397000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
 	{ { 2295000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
 	{ { 2269500, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
 	{ { 2244000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
@@ -1678,6 +1638,8 @@ static struct balanced_throttle cpu_throttle = {
 static struct throttle_table gpu_throttle_table[] = {
 	/* CPU_THROT_LOW cannot be used by other than CPU */
 	/*      CPU,    GPU,  C2BUS,  C3BUS,   SCLK,    EMC   */
+	{ { 2499000, 804000, 480000, 756000, 384000, 924000 } },
+	{ { 2397000, 793400, 480000, 756000, 384000, 924000 } },
 	{ { 2295000, 782800, 480000, 756000, 384000, 924000 } },
 	{ { 2269500, 772200, 480000, 756000, 384000, 924000 } },
 	{ { 2244000, 761600, 480000, 756000, 384000, 924000 } },
@@ -1911,6 +1873,8 @@ static struct therm_est_data skin_data = {
 static struct throttle_table skin_throttle_table[] = {
 	/* CPU_THROT_LOW cannot be used by other than CPU */
 	/*      CPU,    GPU,  C2BUS,  C3BUS,   SCLK,    EMC   */
+	{ { 2499000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
+	{ { 2397000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
 	{ { 2295000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
 	{ { 2269500, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
 	{ { 2244000, NO_CAP, NO_CAP, NO_CAP, NO_CAP, NO_CAP } },
